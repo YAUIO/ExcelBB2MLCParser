@@ -40,7 +40,7 @@ public class MLCListToXLSX {
                         } else if (fields[c].getType() == String.class) {
                             cell.setCellValue((String) fields[c].get(entry));
                         }
-                    } catch (Exception _) {
+                    } catch (Exception e) {
                     }
                 }
                 r++;

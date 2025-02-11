@@ -12,6 +12,10 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
+        if (args.length == 0) {
+            throw new RuntimeException("Usage program.jar datapath outpath");
+        }
+
         Init.setDB("Names");
         File f = new File("datanames.txt");
         if (f.exists()) {
@@ -27,11 +31,11 @@ public class Main {
                             em.getTransaction().begin();
                             em.persist(h);
                             em.getTransaction().commit();
-                        } catch (Exception _) {
+                        } catch (Exception e) {
                         }
                     }
                 }
-            } catch (Exception _) {
+            } catch (Exception ex) {
 
             }
         }

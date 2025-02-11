@@ -64,7 +64,7 @@ public class BlackBeatToMLC {
                         try {
                             f.setAccessible(true);
                             f.set(entry, obj);
-                        } catch (IllegalAccessException _) {
+                        } catch (IllegalAccessException e) {
 
                         }
                     }
@@ -85,7 +85,7 @@ public class BlackBeatToMLC {
                         try {
                             f.setAccessible(true);
                             f.set(entry, obj);
-                        } catch (IllegalAccessException _) {
+                        } catch (IllegalAccessException e) {
                         }
                     }
                 }

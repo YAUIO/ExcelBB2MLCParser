@@ -18,7 +18,7 @@ public class BlackBeatToList {
         FileInputStream file = null;
         Workbook sourceBook = null;
         try {
-            file = new FileInputStream(new File("example/from.xlsx"));
+            file = new FileInputStream(source);
             sourceBook = new XSSFWorkbook(file);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -48,16 +48,16 @@ public class BlackBeatToList {
                     if (expectedType == Date.class) {
                         try {
                             obj = val.getDateCellValue();
-                        } catch (Exception _) {
+                        } catch (Exception e) {
                             try {
                                 obj = DateFormat.getDateInstance().parse(val.getStringCellValue());
-                            } catch (Exception _) {
+                            } catch (Exception ex) {
                             }
                         }
                     } else if (expectedType == String.class) {
                         try {
                             obj = val.getStringCellValue();
-                        } catch (Exception _) {
+                        } catch (Exception e) {
                             if (val.getCellType() == CellType.NUMERIC) {
                                 long number = (long) val.getNumericCellValue();
                                 obj = String.valueOf(number);
@@ -66,12 +66,12 @@ public class BlackBeatToList {
                     } else if (expectedType == Integer.class) {
                         try {
                             obj = Double.valueOf(val.getNumericCellValue()).intValue();
-                        } catch (Exception _) {
+                        } catch (Exception e) {
                         }
                     } else if (expectedType == Time.class) {
                         try {
                             obj = new Time(val.getDateCellValue().getTime());
-                        } catch (Exception _) {
+                        } catch (Exception e) {
                         }
                     }
                 }
