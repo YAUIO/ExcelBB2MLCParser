@@ -9,12 +9,12 @@ import java.io.FileInputStream;
 import java.lang.reflect.Field;
 import java.sql.Time;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class BlackBeatToList {
     public static ArrayList<BlackBeatEntry> parse(File source) {
+        System.out.println("Started parsing BlackBeats table");
         FileInputStream file = null;
         Workbook sourceBook = null;
         try {
@@ -78,11 +78,13 @@ public class BlackBeatToList {
                 } catch (IllegalAccessException e) {
                     System.out.println(e.getMessage());
                 }
+
+                data.add(entity);
             }
             System.out.println("Parsed row " + (i + 1) + "/" + (sourceSheet.getLastRowNum() + 1) + " | " + entity);
         }
 
-        System.out.println("Finished parsing BlackBeats table");
+        System.out.println("Finished parsing BlackBeats table\n");
 
         return data;
     }
