@@ -14,13 +14,31 @@ public class BlackBeatToMLC {
         ArrayList<MLCEntry> outputData = new ArrayList<>();
         Field[] fields = MLCEntry.class.getDeclaredFields();
         PersonList list = null;
+        boolean doNotAdd = false;
         for (BlackBeatEntry bb : sourceData) {
             list = new PersonList();
-            for (String s : bb.track_composer.split(",")) {
+
+            String[] splitS = bb.track_composer.split(",");
+            if (bb.track_composer.split("\\.").length > splitS.length) {
+                splitS = bb.track_composer.split("\\.");
+            }
+            if (bb.track_composer.split("/").length > splitS.length) {
+                splitS = bb.track_composer.split("/");
+            }
+
+            for (String s : splitS) {
                 list.add(new Person(s, "C"));
             }
 
-            for (String s : bb.track_author.split(",")) {
+            splitS = bb.track_author.split(",");
+            if (bb.track_author.split("\\.").length > splitS.length) {
+                splitS = bb.track_author.split("\\.");
+            }
+            if (bb.track_author.split("/").length > splitS.length) {
+                splitS = bb.track_author.split("/");
+            }
+
+            for (String s : splitS) {
                 list.add(new Person(s, "A"));
             }
 
@@ -44,8 +62,10 @@ public class BlackBeatToMLC {
                         };
 
                         try {
+                            f.setAccessible(true);
                             f.set(entry, obj);
                         } catch (IllegalAccessException _) {
+
                         }
                     }
                 } else {
@@ -57,11 +77,22 @@ public class BlackBeatToMLC {
                             default -> null;
                         };
 
+                        if (f.getName().equals("WRITER_LAST_NAME") && (list.get(i).LastName == null || list.get(i).LastName.isEmpty() || list.get(i).LastName.isBlank() || list.get(i).LastName.equals("-"))) {
+                            doNotAdd = true;
+                            break;
+                        }
+
                         try {
+                            f.setAccessible(true);
                             f.set(entry, obj);
                         } catch (IllegalAccessException _) {
                         }
                     }
+                }
+                if (!doNotAdd) {
+                    outputData.add(entry);
+                } else {
+                    doNotAdd = false;
                 }
             }
         }

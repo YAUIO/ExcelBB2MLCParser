@@ -34,6 +34,9 @@ public class BlackBeatToList {
 
         for (int i = 3; i <= sourceSheet.getLastRowNum(); i++) {
             Row row = sourceSheet.getRow(i);
+            if (row.getCell(0).getDateCellValue() == null) {
+                break;
+            }
             BlackBeatEntry entity = new BlackBeatEntry();
             for (int cell = 0; cell < fields.length; cell++) {
                 Cell val = row.getCell(cell);
@@ -74,14 +77,14 @@ public class BlackBeatToList {
                 }
 
                 try {
+                    fields[cell].setAccessible(true);
                     fields[cell].set(entity, obj);
                 } catch (IllegalAccessException e) {
                     System.out.println(e.getMessage());
                 }
-
-                data.add(entity);
             }
-            System.out.println("Parsed row " + (i + 1) + "/" + (sourceSheet.getLastRowNum() + 1) + " | " + entity);
+            data.add(entity);
+            //System.out.println("Parsed row " + (i + 1) + "/" + (sourceSheet.getLastRowNum() + 1) + " | " + entity);
         }
 
         System.out.println("Finished parsing BlackBeats table\n");
