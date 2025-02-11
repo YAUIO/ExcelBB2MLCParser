@@ -35,9 +35,13 @@ public class Main {
 
             }
         }
-        ArrayList<BlackBeatEntry> sourceData = BlackBeatToList.parse(new File("example/from.xlsx"));
+        ArrayList<BlackBeatEntry> sourceData = BlackBeatToList.parse(new File(args[0]));
         ArrayList<MLCEntry> outData = BlackBeatToMLC.convert(sourceData);
-        MLCListToXLSX.record(new File("example/new.xlsx"),outData);
+        String path = "new.xlsx";
+        if (args.length == 2) {
+            path = args[1];
+        }
+        MLCListToXLSX.record(new File(path),outData);
         try {
             FileOutputStream fo = new FileOutputStream(f);
             PrintWriter p = new PrintWriter(fo, true);
