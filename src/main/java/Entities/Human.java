@@ -2,6 +2,9 @@ package Entities;
 
 import jakarta.persistence.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Entity
 public class Human {
     @Id
@@ -11,11 +14,11 @@ public class Human {
     @Column(nullable = false, unique = true)
     public String name;
 
-    @Column(nullable = true, unique = false)
-    public String surname;
-
-    @Column(nullable = true, unique = false)
-    public String fi;
+    @ElementCollection
+    @CollectionTable(name = "human_fi_map", joinColumns = @JoinColumn(name = "human_id"))
+    @MapKeyColumn(name = "fi_key")
+    @Column(name = "fi_value", nullable = true, unique = false)
+    public Map<String, String> fisur = new HashMap<>();
 
     @Override
     public String toString() {

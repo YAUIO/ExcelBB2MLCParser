@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 public class Person {
     @AlternateTitle("WRITER LAST NAME *")
@@ -166,27 +167,29 @@ public class Person {
                     break;
                 default:
                     if (nameArr.length > 2) {
-                        if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResultOrNull() != null) {
-                            Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResult();
+                        if (Init.getEntityManager().createQuery("SELECT h FROM Human h JOIN h.fisur f WHERE KEY(f) = :name").setParameter("name", name).getSingleResultOrNull() != null) {
+                            Human h = Init.getEntityManager().createQuery("SELECT h FROM Human h JOIN h.fisur f WHERE KEY(f) = :name", Human.class).setParameter("name", name).getSingleResult();
                             FirstName = h.name;
-                            LastName = h.surname;
+                            LastName = h.fisur.get(name);
                         } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResultOrNull() != null &&
-                                ((Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult()).surname != null) {
+                                (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name", Human.class).setParameter("name", nameArr[0]).getSingleResult()).fisur.get(name) != null) {
                             Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult();
                             FirstName = h.name;
-                            LastName = h.surname;
+                            LastName = h.fisur.get(name);
                         } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResultOrNull() != null &&
-                                ((Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult()).surname != null) {
-                            Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult();
+                                (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name", Human.class).setParameter("name", nameArr[1]).getSingleResult()).fisur.get(name) != null) {
+                            Human h = Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name", Human.class).setParameter("name", nameArr[1]).getSingleResult();
                             FirstName = h.name;
-                            LastName = h.surname;
+                            LastName = h.fisur.get(name);
                         } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResultOrNull() != null &&
-                                ((Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult()).surname != null) {
-                            Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult();
+                                (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name", Human.class).setParameter("name", nameArr[2]).getSingleResult()).fisur.get(name) != null) {
+                            Human h = Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name", Human.class).setParameter("name", nameArr[2]).getSingleResult();
                             FirstName = h.name;
-                            LastName = h.surname;
+                            LastName = h.fisur.get(name);
                         }
-                    } else {
+                    }
+
+                    if (FirstName == null && LastName == null){
                         JDialog jd = new JDialog();
                         jd.setTitle("Need manual intervention");
                         Dimension d = new Dimension(400, 200);
@@ -194,7 +197,11 @@ public class Person {
                         jd.setPreferredSize(d);
                         jd.setResizable(false);
                         jd.setLayout(new GridLayout(3, 1));
-                        jd.add(new JLabel(name + " - Please type name and surname"));
+                        JPanel up = new JPanel(new GridLayout(2,1));
+                        up.add(new JLabel(name + " - Please type name and surname"));
+                        up.add(new JTextField(name + " (for copy only)"));
+                        jd.add(up);
+
                         JPanel jp = new JPanel();
                         jp.setLayout(new GridLayout(1, 2));
                         JButton submit = new JButton("submit");
@@ -217,8 +224,7 @@ public class Person {
                         submit.addActionListener(l -> {
                             Human h = new Human();
                             h.name = jfn.getText();
-                            h.fi = finalName;
-                            h.surname = jfs.getText();
+                            h.fisur.put(finalName, jfs.getText());
                             if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name", h.name).getSingleResultOrNull() == null) {
                                 try {
                                     EntityManager em = Init.getEntityManager();
@@ -228,9 +234,16 @@ public class Person {
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
+                            } else {
+                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name", Human.class).setParameter("name", h.name).getSingleResult();
+                                EntityManager em = Init.getEntityManager();
+                                rec.fisur.put(finalName, jfs.getText());
+                                em.getTransaction().begin();
+                                em.merge(rec);
+                                em.getTransaction().commit();
                             }
                             FirstName = h.name;
-                            LastName = h.surname;
+                            LastName = h.fisur.get(finalName);
                             jd.setVisible(false);
                             jd.dispose();
                             synchronized (wait) {
@@ -263,6 +276,30 @@ public class Person {
             code = role_codes.valueOf(role_code).toString();
         } catch (Exception e) {
             throw new RuntimeException("Couldn't parse creator role code: " + role_code);
+        }
+
+        if (FirstName != null) {
+            while (FirstName.charAt(0) ==' ') {
+                FirstName = FirstName.substring(1);
+                if (FirstName.isEmpty()) break;
+            }
+
+            while (FirstName.charAt(FirstName.length()-1) ==' ') {
+                FirstName = FirstName.substring(0, FirstName.length() - 2);
+                if (FirstName.isEmpty()) break;
+            }
+        }
+
+        if (LastName != null) {
+            while (LastName.charAt(0) ==' ') {
+                LastName = LastName.substring(1);
+                if (LastName.isEmpty()) break;
+            }
+
+            while (LastName.charAt(LastName.length()-1) ==' ') {
+                LastName = LastName.substring(0, LastName.length()-2);
+                if (LastName.isEmpty()) break;
+            }
         }
     }
 

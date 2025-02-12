@@ -24,7 +24,7 @@ public class BlackBeatToList {
             throw new RuntimeException(e);
         }
 
-        Sheet sourceSheet = sourceBook.getSheet("BLACK BEATS");
+        Sheet sourceSheet = sourceBook.getSheet("Лист1");
         Row header = sourceSheet.getRow(0);
 
         Class<?> entryClass = BlackBeatEntry.class;
