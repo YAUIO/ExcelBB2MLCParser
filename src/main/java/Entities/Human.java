@@ -11,10 +11,10 @@ public class Human {
     @Column(nullable = false, unique = true)
     public String name;
 
-    @Column(nullable = true)
+    @Column(nullable = true, unique = false)
     public String surname;
 
-    @Column(nullable = true)
+    @Column(nullable = true, unique = false)
     public String fi;
 
     @Override

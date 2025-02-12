@@ -101,10 +101,16 @@ public class Person {
                         one.addActionListener(l -> {
                             Human h = new Human();
                             h.name = nameArr[0];
-                            EntityManager em = Init.getEntityManager();
-                            em.getTransaction().begin();
-                            em.persist(h);
-                            em.getTransaction().commit();
+                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                try {
+                                    EntityManager em = Init.getEntityManager();
+                                    em.getTransaction().begin();
+                                    em.persist(h);
+                                    em.getTransaction().commit();
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
                             FirstName = h.name;
                             LastName = nameArr[1];
                             jd.setVisible(false);
@@ -117,10 +123,16 @@ public class Person {
                         two.addActionListener(l -> {
                             Human h = new Human();
                             h.name = nameArr[1];
-                            EntityManager em = Init.getEntityManager();
-                            em.getTransaction().begin();
-                            em.persist(h);
-                            em.getTransaction().commit();
+                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                try {
+                                    EntityManager em = Init.getEntityManager();
+                                    em.getTransaction().begin();
+                                    em.persist(h);
+                                    em.getTransaction().commit();
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
                             FirstName = h.name;
                             LastName = nameArr[0];
                             jd.setVisible(false);
@@ -175,10 +187,16 @@ public class Person {
                             h.name = jfn.getText();
                             h.fi = finalName;
                             h.surname = jfs.getText();
-                            EntityManager em = Init.getEntityManager();
-                            em.getTransaction().begin();
-                            em.persist(h);
-                            em.getTransaction().commit();
+                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                try {
+                                    EntityManager em = Init.getEntityManager();
+                                    em.getTransaction().begin();
+                                    em.persist(h);
+                                    em.getTransaction().commit();
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
                             FirstName = h.name;
                             LastName = h.surname;
                             jd.setVisible(false);
