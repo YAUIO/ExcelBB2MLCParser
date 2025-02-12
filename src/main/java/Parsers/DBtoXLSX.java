@@ -39,8 +39,7 @@ public class DBtoXLSX {
                         } else if (fields[c].getType() == String.class) {
                             cell.setCellValue((String) fields[c].get(h));
                         } else if (fields[c].getType() == Map.class) {
-                            if (h.fisur != null) {
-
+                            if (!h.fisur.isEmpty()) {
                                 Sheet mapSheet = workbook.createSheet(h.name);
 
                                 cell.setCellValue("LINK");

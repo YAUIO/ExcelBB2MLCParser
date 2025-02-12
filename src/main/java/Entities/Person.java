@@ -334,7 +334,7 @@ public class Person {
                                                 em.getTransaction().begin();
                                                 em.persist(h);
                                                 em.getTransaction().commit();
-                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur.isEmpty()) {
                                                 Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
                                                 rec.fisur = h.fisur;
                                                 em.getTransaction().begin();
@@ -362,7 +362,7 @@ public class Person {
                                                 em.getTransaction().begin();
                                                 em.persist(h);
                                                 em.getTransaction().commit();
-                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur.isEmpty()) {
                                                 Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
                                                 rec.fisur = h.fisur;
                                                 em.getTransaction().begin();
@@ -390,7 +390,7 @@ public class Person {
                                                 em.getTransaction().begin();
                                                 em.persist(h);
                                                 em.getTransaction().commit();
-                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur.isEmpty()) {
                                                 Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
                                                 rec.fisur = h.fisur;
                                                 em.getTransaction().begin();
@@ -422,12 +422,6 @@ public class Person {
                                         em.getTransaction().begin();
                                         em.persist(h);
                                         em.getTransaction().commit();
-                                    } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
-                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
-                                        rec.fisur = h.fisur;
-                                        em.getTransaction().begin();
-                                        em.merge(rec);
-                                        em.getTransaction().commit();
                                     } else {
                                         Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
                                         rec.fisur.putAll(h.fisur);
@@ -452,12 +446,6 @@ public class Person {
                                         em.getTransaction().begin();
                                         em.persist(h);
                                         em.getTransaction().commit();
-                                    } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
-                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
-                                        rec.fisur = h.fisur;
-                                        em.getTransaction().begin();
-                                        em.merge(rec);
-                                        em.getTransaction().commit();
                                     } else {
                                         Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
                                         rec.fisur.putAll(h.fisur);
@@ -481,12 +469,6 @@ public class Person {
                                     if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name").setParameter("name",h.name).getSingleResultOrNull() == null) {
                                         em.getTransaction().begin();
                                         em.persist(h);
-                                        em.getTransaction().commit();
-                                    } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
-                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
-                                        rec.fisur = h.fisur;
-                                        em.getTransaction().begin();
-                                        em.merge(rec);
                                         em.getTransaction().commit();
                                     } else {
                                         Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
