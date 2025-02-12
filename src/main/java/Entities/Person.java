@@ -158,6 +158,21 @@ public class Person {
                         Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResult();
                         FirstName = h.name;
                         LastName = h.surname;
+                    } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResultOrNull() != null &&
+                            ((Human)Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult()).surname != null) {
+                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult();
+                        FirstName = h.name;
+                        LastName = h.surname;
+                    } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResultOrNull() != null &&
+                            ((Human)Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult()).surname != null) {
+                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult();
+                        FirstName = h.name;
+                        LastName = h.surname;
+                    } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResultOrNull() != null &&
+                            ((Human)Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult()).surname != null) {
+                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult();
+                        FirstName = h.name;
+                        LastName = h.surname;
                     } else {
                         JDialog jd = new JDialog();
                         jd.setTitle("Need manual intervention");
