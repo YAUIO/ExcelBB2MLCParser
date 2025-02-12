@@ -196,12 +196,15 @@ public class Person {
                         jd.setSize(d);
                         jd.setPreferredSize(d);
                         jd.setResizable(false);
-                        jd.setLayout(new GridLayout(3, 1));
+                        jd.setLayout(new GridLayout(4, 1));
                         JPanel up = new JPanel(new GridLayout(2,1));
                         up.add(new JLabel(name + " - Please type name and surname"));
                         up.add(new JTextField(name + " (for copy only)"));
                         jd.add(up);
-
+                        JPanel row = new JPanel(new GridLayout(1,2));
+                        row.add(new JLabel("Name", SwingConstants.CENTER));
+                        row.add(new JLabel("Surname", SwingConstants.CENTER));
+                        jd.add(row);
                         JPanel jp = new JPanel();
                         jp.setLayout(new GridLayout(1, 2));
                         JButton submit = new JButton("submit");
