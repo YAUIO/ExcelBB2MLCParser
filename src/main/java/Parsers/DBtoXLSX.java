@@ -15,8 +15,8 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 public class DBtoXLSX {
-    public static void write() {
-        try (Workbook workbook = new XSSFWorkbook(); FileOutputStream fileOut = new FileOutputStream(new File("db.xlsx"))) {
+    public static void write(File f) {
+        try (Workbook workbook = new XSSFWorkbook(); FileOutputStream fileOut = new FileOutputStream(f)) {
 
             Sheet sheet = workbook.createSheet("DB");
             Field[] fields = Human.class.getDeclaredFields();
@@ -71,7 +71,7 @@ public class DBtoXLSX {
             }
 
             workbook.write(fileOut);
-            System.out.println("Excel file created successfully: db.xlsx");
+            System.out.println("Excel file created successfully: " + f.getAbsolutePath());
 
         } catch (IOException e) {
             System.out.println("Error creating Excel file: " + e.getMessage());
