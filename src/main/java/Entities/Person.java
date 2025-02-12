@@ -7,8 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class Person {
     @AlternateTitle("WRITER LAST NAME *")
@@ -57,8 +55,10 @@ public class Person {
                         JPanel jp = new JPanel();
                         JButton one = new JButton("(1)");
                         JButton two = new JButton("(2)");
+                        JButton ignore = new JButton("ignore");
                         jp.add(one);
                         jp.add(two);
+                        jp.add(ignore);
                         jd.add(jp);
                         jd.setVisible(true);
                         Thread wait = Thread.currentThread();
@@ -142,6 +142,17 @@ public class Person {
                             }
                         });
 
+                        String finalName1 = name;
+                        ignore.addActionListener(l -> {
+                            FirstName = "WRONGDATA";
+                            LastName = finalName1;
+                            jd.setVisible(false);
+                            jd.dispose();
+                            synchronized (wait) {
+                                wait.interrupt();
+                            }
+                        });
+
                         try {
                             synchronized (wait) {
                                 wait.wait();
@@ -191,10 +202,14 @@ public class Person {
                         jfn.setToolTipText("Name");
                         JTextField jfs = new JTextField();
                         jfs.setToolTipText("Surname");
+                        JPanel jpb = new JPanel();
+                        JButton ignore = new JButton("ignore");
+                        jpb.add(submit);
+                        jpb.add(ignore);
                         jp.add(jfn);
                         jp.add(jfs);
                         jd.add(jp);
-                        jd.add(submit);
+                        jd.add(jpb);
                         jd.setVisible(true);
                         Thread wait = Thread.currentThread();
 
@@ -222,6 +237,18 @@ public class Person {
                                 wait.interrupt();
                             }
                         });
+
+                        String finalName1 = name;
+                        ignore.addActionListener(l -> {
+                            FirstName = "WRONGDATA";
+                            LastName = finalName1;
+                            jd.setVisible(false);
+                            jd.dispose();
+                            synchronized (wait) {
+                                wait.interrupt();
+                            }
+                        });
+
                         try {
                             synchronized (wait) {
                                 wait.wait();
