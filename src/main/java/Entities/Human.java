@@ -11,6 +11,12 @@ public class Human {
     @Column(nullable = false, unique = true)
     public String name;
 
+    @Column(nullable = true)
+    public String surname;
+
+    @Column(nullable = true)
+    public String fi;
+
     @Override
     public String toString() {
         return "Human{" +

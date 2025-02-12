@@ -142,48 +142,57 @@ public class Person {
                     LastName = nameArr[0];
                     break;
                 default:
-                    JDialog jd = new JDialog();
-                    jd.setTitle("Need manual intervention");
-                    Dimension d = new Dimension(400, 200);
-                    jd.setSize(d);
-                    jd.setPreferredSize(d);
-                    jd.setResizable(false);
-                    jd.setLayout(new GridLayout(3, 1));
-                    jd.add(new JLabel(name + " - Please type name and surname"));
-                    JPanel jp = new JPanel();
-                    jp.setLayout(new GridLayout(1,2));
-                    JButton submit = new JButton("submit");
-                    JTextField jfn = new JTextField();
-                    jfn.setToolTipText("Name");
-                    JTextField jfs = new JTextField();
-                    jfs.setToolTipText("Surname");
-                    jp.add(jfn);
-                    jp.add(jfs);
-                    jd.add(jp);
-                    jd.add(submit);
-                    jd.setVisible(true);
-                    Thread wait = Thread.currentThread();
-
-                    submit.addActionListener(l -> {
-                        Human h = new Human();
-                        h.name = jfn.getText();
-                        EntityManager em = Init.getEntityManager();
-                        em.getTransaction().begin();
-                        em.persist(h);
-                        em.getTransaction().commit();
+                    if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResultOrNull() != null) {
+                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResult();
                         FirstName = h.name;
-                        LastName = jfs.getText();
-                        jd.setVisible(false);
-                        jd.dispose();
-                        synchronized (wait) {
-                            wait.interrupt();
+                        LastName = h.surname;
+                    } else {
+                        JDialog jd = new JDialog();
+                        jd.setTitle("Need manual intervention");
+                        Dimension d = new Dimension(400, 200);
+                        jd.setSize(d);
+                        jd.setPreferredSize(d);
+                        jd.setResizable(false);
+                        jd.setLayout(new GridLayout(3, 1));
+                        jd.add(new JLabel(name + " - Please type name and surname"));
+                        JPanel jp = new JPanel();
+                        jp.setLayout(new GridLayout(1, 2));
+                        JButton submit = new JButton("submit");
+                        JTextField jfn = new JTextField();
+                        jfn.setToolTipText("Name");
+                        JTextField jfs = new JTextField();
+                        jfs.setToolTipText("Surname");
+                        jp.add(jfn);
+                        jp.add(jfs);
+                        jd.add(jp);
+                        jd.add(submit);
+                        jd.setVisible(true);
+                        Thread wait = Thread.currentThread();
+
+                        String finalName = name;
+                        submit.addActionListener(l -> {
+                            Human h = new Human();
+                            h.name = jfn.getText();
+                            h.fi = finalName;
+                            h.surname = jfs.getText();
+                            EntityManager em = Init.getEntityManager();
+                            em.getTransaction().begin();
+                            em.persist(h);
+                            em.getTransaction().commit();
+                            FirstName = h.name;
+                            LastName = h.surname;
+                            jd.setVisible(false);
+                            jd.dispose();
+                            synchronized (wait) {
+                                wait.interrupt();
+                            }
+                        });
+                        try {
+                            synchronized (wait) {
+                                wait.wait();
+                            }
+                        } catch (InterruptedException e) {
                         }
-                    });
-                    try {
-                        synchronized (wait) {
-                            wait.wait();
-                        }
-                    } catch (InterruptedException e) {
                     }
             }
         }
