@@ -101,7 +101,7 @@ public class Person {
                         one.addActionListener(l -> {
                             Human h = new Human();
                             h.name = nameArr[0];
-                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name", h.name).getSingleResultOrNull() == null) {
                                 try {
                                     EntityManager em = Init.getEntityManager();
                                     em.getTransaction().begin();
@@ -123,7 +123,7 @@ public class Person {
                         two.addActionListener(l -> {
                             Human h = new Human();
                             h.name = nameArr[1];
-                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name", h.name).getSingleResultOrNull() == null) {
                                 try {
                                     EntityManager em = Init.getEntityManager();
                                     em.getTransaction().begin();
@@ -154,25 +154,27 @@ public class Person {
                     LastName = nameArr[0];
                     break;
                 default:
-                    if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResultOrNull() != null) {
-                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResult();
-                        FirstName = h.name;
-                        LastName = h.surname;
-                    } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResultOrNull() != null &&
-                            ((Human)Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult()).surname != null) {
-                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult();
-                        FirstName = h.name;
-                        LastName = h.surname;
-                    } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResultOrNull() != null &&
-                            ((Human)Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult()).surname != null) {
-                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult();
-                        FirstName = h.name;
-                        LastName = h.surname;
-                    } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResultOrNull() != null &&
-                            ((Human)Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult()).surname != null) {
-                        Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult();
-                        FirstName = h.name;
-                        LastName = h.surname;
+                    if (nameArr.length > 2) {
+                        if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResultOrNull() != null) {
+                            Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.fi=:name").setParameter("name", name).getSingleResult();
+                            FirstName = h.name;
+                            LastName = h.surname;
+                        } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResultOrNull() != null &&
+                                ((Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult()).surname != null) {
+                            Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[0]).getSingleResult();
+                            FirstName = h.name;
+                            LastName = h.surname;
+                        } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResultOrNull() != null &&
+                                ((Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult()).surname != null) {
+                            Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[1]).getSingleResult();
+                            FirstName = h.name;
+                            LastName = h.surname;
+                        } else if (Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResultOrNull() != null &&
+                                ((Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult()).surname != null) {
+                            Human h = (Human) Init.getEntityManager().createQuery("SELECT b from Human b WHERE b.name=:name").setParameter("name", nameArr[2]).getSingleResult();
+                            FirstName = h.name;
+                            LastName = h.surname;
+                        }
                     } else {
                         JDialog jd = new JDialog();
                         jd.setTitle("Need manual intervention");
@@ -202,7 +204,7 @@ public class Person {
                             h.name = jfn.getText();
                             h.fi = finalName;
                             h.surname = jfs.getText();
-                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name", h.name).getSingleResultOrNull() == null) {
                                 try {
                                     EntityManager em = Init.getEntityManager();
                                     em.getTransaction().begin();
