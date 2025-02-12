@@ -189,87 +189,410 @@ public class Person {
                         }
                     }
 
-                    if (FirstName == null && LastName == null){
-                        JDialog jd = new JDialog();
-                        jd.setTitle("Need manual intervention");
-                        Dimension d = new Dimension(400, 200);
-                        jd.setSize(d);
-                        jd.setPreferredSize(d);
-                        jd.setResizable(false);
-                        jd.setLayout(new GridLayout(4, 1));
-                        JPanel up = new JPanel(new GridLayout(2,1));
-                        up.add(new JLabel(name + " - Please type name and surname"));
-                        up.add(new JTextField(name + " (for copy only)"));
-                        jd.add(up);
-                        JPanel row = new JPanel(new GridLayout(1,2));
-                        row.add(new JLabel("Name", SwingConstants.CENTER));
-                        row.add(new JLabel("Surname", SwingConstants.CENTER));
-                        jd.add(row);
-                        JPanel jp = new JPanel();
-                        jp.setLayout(new GridLayout(1, 2));
-                        JButton submit = new JButton("submit");
-                        JTextField jfn = new JTextField();
-                        jfn.setToolTipText("Name");
-                        JTextField jfs = new JTextField();
-                        jfs.setToolTipText("Surname");
-                        JPanel jpb = new JPanel();
-                        JButton ignore = new JButton("ignore");
-                        jpb.add(submit);
-                        jpb.add(ignore);
-                        jp.add(jfn);
-                        jp.add(jfs);
-                        jd.add(jp);
-                        jd.add(jpb);
-                        jd.setVisible(true);
-                        Thread wait = Thread.currentThread();
+                    if (FirstName == null && LastName == null) {
 
-                        String finalName = name;
-                        submit.addActionListener(l -> {
-                            Human h = new Human();
-                            h.name = jfn.getText();
-                            h.fisur.put(finalName, jfs.getText());
-                            if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name", h.name).getSingleResultOrNull() == null) {
+                        if (nameArr.length == 3) {
+                            {
+                                JDialog jd = new JDialog();
+                                jd.setTitle("Need manual intervention");
+                                Dimension d = new Dimension(400, 200);
+                                jd.setSize(d);
+                                jd.setPreferredSize(d);
+                                jd.setResizable(false);
+                                jd.setLayout(new GridLayout(2, 1));
+                                jd.add(new JLabel("Which is name: (1) " + nameArr[0] + " or (2) " + nameArr[1] + " or (3) " + nameArr[2]));
+                                JPanel jp = new JPanel();
+                                JButton one = new JButton("(1)");
+                                JButton two = new JButton("(2)");
+                                JButton three = new JButton("(3)");
+                                JButton ignore = new JButton("ignore");
+                                jp.add(one);
+                                jp.add(two);
+                                jp.add(three);
+                                jp.add(ignore);
+                                jd.add(jp);
+                                jd.setVisible(true);
+                                Thread wait = Thread.currentThread();
+
+                                one.addKeyListener(new KeyAdapter() {
+                                    @Override
+                                    public void keyPressed(KeyEvent e) {
+                                        if (e.getKeyCode() == KeyEvent.VK_1) {
+                                            Human h = new Human();
+                                            h.name = nameArr[0];
+                                            FirstName = h.name;
+                                            jd.setVisible(false);
+                                            jd.dispose();
+                                            synchronized (wait) {
+                                                wait.interrupt();
+                                            }
+                                        } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                                            Human h = new Human();
+                                            h.name = nameArr[1];
+                                            FirstName = h.name;
+                                            jd.setVisible(false);
+                                            jd.dispose();
+                                            synchronized (wait) {
+                                                wait.interrupt();
+                                            }
+                                        } else if (e.getKeyCode() == KeyEvent.VK_3) {
+                                            Human h = new Human();
+                                            h.name = nameArr[2];
+                                            FirstName = h.name;
+                                            jd.setVisible(false);
+                                            jd.dispose();
+                                            synchronized (wait) {
+                                                wait.interrupt();
+                                            }
+                                        }
+                                    }
+                                });
+
+                                one.addActionListener(l -> {
+                                    Human h = new Human();
+                                    h.name = nameArr[0];
+                                    FirstName = h.name;
+                                    jd.setVisible(false);
+                                    jd.dispose();
+                                    synchronized (wait) {
+                                        wait.interrupt();
+                                    }
+                                });
+
+                                two.addActionListener(l -> {
+                                    Human h = new Human();
+                                    h.name = nameArr[1];
+                                    FirstName = h.name;
+                                    jd.setVisible(false);
+                                    jd.dispose();
+                                    synchronized (wait) {
+                                        wait.interrupt();
+                                    }
+                                });
+
+                                three.addActionListener(l -> {
+                                    Human h = new Human();
+                                    h.name = nameArr[2];
+                                    FirstName = h.name;
+                                    jd.setVisible(false);
+                                    jd.dispose();
+                                    synchronized (wait) {
+                                        wait.interrupt();
+                                    }
+                                });
+
+                                String finalName1 = name;
+                                ignore.addActionListener(l -> {
+                                    FirstName = "WRONGDATA";
+                                    LastName = finalName1;
+                                    jd.setVisible(false);
+                                    jd.dispose();
+                                    synchronized (wait) {
+                                        wait.interrupt();
+                                    }
+                                });
+
                                 try {
-                                    EntityManager em = Init.getEntityManager();
-                                    em.getTransaction().begin();
-                                    em.persist(h);
-                                    em.getTransaction().commit();
-                                } catch (Exception e) {
-                                    System.out.println(e.getMessage());
+                                    synchronized (wait) {
+                                        wait.wait();
+                                    }
+                                } catch (InterruptedException e) {
                                 }
-                            } else {
-                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name", Human.class).setParameter("name", h.name).getSingleResult();
-                                EntityManager em = Init.getEntityManager();
-                                rec.fisur.put(finalName, jfs.getText());
-                                em.getTransaction().begin();
-                                em.merge(rec);
-                                em.getTransaction().commit();
                             }
-                            FirstName = h.name;
-                            LastName = h.fisur.get(finalName);
-                            jd.setVisible(false);
-                            jd.dispose();
-                            synchronized (wait) {
-                                wait.interrupt();
-                            }
-                        });
 
-                        String finalName1 = name;
-                        ignore.addActionListener(l -> {
-                            FirstName = "WRONGDATA";
-                            LastName = finalName1;
-                            jd.setVisible(false);
-                            jd.dispose();
-                            synchronized (wait) {
-                                wait.interrupt();
-                            }
-                        });
+                            if (!FirstName.equals("WRONGDATA")) {
+                                JDialog jd = new JDialog();
+                                jd.setTitle("Need manual intervention");
+                                Dimension d = new Dimension(400, 200);
+                                jd.setSize(d);
+                                jd.setPreferredSize(d);
+                                jd.setResizable(false);
+                                jd.setLayout(new GridLayout(2, 1));
+                                jd.add(new JLabel("Which is SURNAME !! : (1) " + nameArr[0] + " or (2) " + nameArr[1] + " or (3) " + nameArr[2]));
+                                JPanel jp = new JPanel();
+                                JButton one = new JButton("(1)");
+                                JButton two = new JButton("(2)");
+                                JButton three = new JButton("(3)");
+                                jp.add(one);
+                                jp.add(two);
+                                jp.add(three);
+                                jd.add(jp);
+                                jd.setVisible(true);
+                                Thread wait = Thread.currentThread();
 
-                        try {
-                            synchronized (wait) {
-                                wait.wait();
+                                String finalName2 = name;
+                                one.addKeyListener(new KeyAdapter() {
+                                    @Override
+                                    public void keyPressed(KeyEvent e) {
+                                        if (e.getKeyCode() == KeyEvent.VK_1) {
+                                            Human h = new Human();
+                                            h.name = FirstName;
+                                            LastName = nameArr[0];
+                                            h.fisur.put(finalName2,LastName);
+                                            EntityManager em = Init.getEntityManager();
+                                            if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                                em.getTransaction().begin();
+                                                em.persist(h);
+                                                em.getTransaction().commit();
+                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                                rec.fisur = h.fisur;
+                                                em.getTransaction().begin();
+                                                em.merge(rec);
+                                                em.getTransaction().commit();
+                                            } else {
+                                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                                rec.fisur.putAll(h.fisur);
+                                                em.getTransaction().begin();
+                                                em.merge(rec);
+                                                em.getTransaction().commit();
+                                            }
+                                            jd.setVisible(false);
+                                            jd.dispose();
+                                            synchronized (wait) {
+                                                wait.interrupt();
+                                            }
+                                        } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                                            Human h = new Human();
+                                            h.name = FirstName;
+                                            LastName = nameArr[1];
+                                            h.fisur.put(finalName2,LastName);
+                                            EntityManager em = Init.getEntityManager();
+                                            if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                                em.getTransaction().begin();
+                                                em.persist(h);
+                                                em.getTransaction().commit();
+                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                                rec.fisur = h.fisur;
+                                                em.getTransaction().begin();
+                                                em.merge(rec);
+                                                em.getTransaction().commit();
+                                            } else {
+                                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                                rec.fisur.putAll(h.fisur);
+                                                em.getTransaction().begin();
+                                                em.merge(rec);
+                                                em.getTransaction().commit();
+                                            }
+                                            jd.setVisible(false);
+                                            jd.dispose();
+                                            synchronized (wait) {
+                                                wait.interrupt();
+                                            }
+                                        } else if (e.getKeyCode() == KeyEvent.VK_3) {
+                                            Human h = new Human();
+                                            h.name = FirstName;
+                                            LastName = nameArr[2];
+                                            h.fisur.put(finalName2,LastName);
+                                            EntityManager em = Init.getEntityManager();
+                                            if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                                em.getTransaction().begin();
+                                                em.persist(h);
+                                                em.getTransaction().commit();
+                                            } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                                rec.fisur = h.fisur;
+                                                em.getTransaction().begin();
+                                                em.merge(rec);
+                                                em.getTransaction().commit();
+                                            } else {
+                                                Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                                rec.fisur.putAll(h.fisur);
+                                                em.getTransaction().begin();
+                                                em.merge(rec);
+                                                em.getTransaction().commit();
+                                            }
+                                            jd.setVisible(false);
+                                            jd.dispose();
+                                            synchronized (wait) {
+                                                wait.interrupt();
+                                            }
+                                        }
+                                    }
+                                });
+
+                                one.addActionListener(l -> {
+                                    Human h = new Human();
+                                    h.name = FirstName;
+                                    LastName = nameArr[0];
+                                    h.fisur.put(finalName2,LastName);
+                                    EntityManager em = Init.getEntityManager();
+                                    if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                        em.getTransaction().begin();
+                                        em.persist(h);
+                                        em.getTransaction().commit();
+                                    } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                        rec.fisur = h.fisur;
+                                        em.getTransaction().begin();
+                                        em.merge(rec);
+                                        em.getTransaction().commit();
+                                    } else {
+                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                        rec.fisur.putAll(h.fisur);
+                                        em.getTransaction().begin();
+                                        em.merge(rec);
+                                        em.getTransaction().commit();
+                                    }
+                                    jd.setVisible(false);
+                                    jd.dispose();
+                                    synchronized (wait) {
+                                        wait.interrupt();
+                                    }
+                                });
+
+                                two.addActionListener(l -> {
+                                    Human h = new Human();
+                                    h.name = FirstName;
+                                    LastName = nameArr[1];
+                                    h.fisur.put(finalName2,LastName);
+                                    EntityManager em = Init.getEntityManager();
+                                    if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                        em.getTransaction().begin();
+                                        em.persist(h);
+                                        em.getTransaction().commit();
+                                    } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                        rec.fisur = h.fisur;
+                                        em.getTransaction().begin();
+                                        em.merge(rec);
+                                        em.getTransaction().commit();
+                                    } else {
+                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                        rec.fisur.putAll(h.fisur);
+                                        em.getTransaction().begin();
+                                        em.merge(rec);
+                                        em.getTransaction().commit();
+                                    }
+                                    jd.setVisible(false);
+                                    jd.dispose();
+                                    synchronized (wait) {
+                                        wait.interrupt();
+                                    }
+                                });
+
+                                three.addActionListener(l -> {
+                                    Human h = new Human();
+                                    h.name = FirstName;
+                                    LastName = nameArr[2];
+                                    h.fisur.put(finalName2,LastName);
+                                    EntityManager em = Init.getEntityManager();
+                                    if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name").setParameter("name",h.name).getSingleResultOrNull() == null) {
+                                        em.getTransaction().begin();
+                                        em.persist(h);
+                                        em.getTransaction().commit();
+                                    } else if (Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult().fisur == null) {
+                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                        rec.fisur = h.fisur;
+                                        em.getTransaction().begin();
+                                        em.merge(rec);
+                                        em.getTransaction().commit();
+                                    } else {
+                                        Human rec = Init.getEntityManager().createQuery("SELECT h from Human h WHERE h.name = :name", Human.class).setParameter("name",h.name).getSingleResult();
+                                        rec.fisur.putAll(h.fisur);
+                                        em.getTransaction().begin();
+                                        em.merge(rec);
+                                        em.getTransaction().commit();
+                                    }
+                                    jd.setVisible(false);
+                                    jd.dispose();
+                                    synchronized (wait) {
+                                        wait.interrupt();
+                                    }
+                                });
+
+                                try {
+                                    synchronized (wait) {
+                                        wait.wait();
+                                    }
+                                } catch (InterruptedException e) {
+                                }
                             }
-                        } catch (InterruptedException e) {
+
+                        } else {
+
+                            JDialog jd = new JDialog();
+                            jd.setTitle("Need manual intervention");
+                            Dimension d = new Dimension(400, 200);
+                            jd.setSize(d);
+                            jd.setPreferredSize(d);
+                            jd.setResizable(false);
+                            jd.setLayout(new GridLayout(4, 1));
+                            JPanel up = new JPanel(new GridLayout(2, 1));
+                            up.add(new JLabel(name + " - Please type name and surname"));
+                            up.add(new JTextField(name + " (for copy only)"));
+                            jd.add(up);
+                            JPanel row = new JPanel(new GridLayout(1, 2));
+                            row.add(new JLabel("Name", SwingConstants.CENTER));
+                            row.add(new JLabel("Surname", SwingConstants.CENTER));
+                            jd.add(row);
+                            JPanel jp = new JPanel();
+                            jp.setLayout(new GridLayout(1, 2));
+                            JButton submit = new JButton("submit");
+                            JTextField jfn = new JTextField();
+                            jfn.setToolTipText("Name");
+                            JTextField jfs = new JTextField();
+                            jfs.setToolTipText("Surname");
+                            JPanel jpb = new JPanel();
+                            JButton ignore = new JButton("ignore");
+                            jpb.add(submit);
+                            jpb.add(ignore);
+                            jp.add(jfn);
+                            jp.add(jfs);
+                            jd.add(jp);
+                            jd.add(jpb);
+                            jd.setVisible(true);
+                            Thread wait = Thread.currentThread();
+
+                            String finalName = name;
+                            submit.addActionListener(l -> {
+                                Human h = new Human();
+                                h.name = jfn.getText();
+                                h.fisur.put(finalName, jfs.getText());
+                                if (Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name").setParameter("name", h.name).getSingleResultOrNull() == null) {
+                                    try {
+                                        EntityManager em = Init.getEntityManager();
+                                        em.getTransaction().begin();
+                                        em.persist(h);
+                                        em.getTransaction().commit();
+                                    } catch (Exception e) {
+                                        System.out.println(e.getMessage());
+                                    }
+                                } else {
+                                    Human rec = Init.getEntityManager().createQuery("SELECT h from Human h where h.name=:name", Human.class).setParameter("name", h.name).getSingleResult();
+                                    EntityManager em = Init.getEntityManager();
+                                    rec.fisur.put(finalName, jfs.getText());
+                                    em.getTransaction().begin();
+                                    em.merge(rec);
+                                    em.getTransaction().commit();
+                                }
+                                FirstName = h.name;
+                                LastName = h.fisur.get(finalName);
+                                jd.setVisible(false);
+                                jd.dispose();
+                                synchronized (wait) {
+                                    wait.interrupt();
+                                }
+                            });
+
+                            String finalName1 = name;
+                            ignore.addActionListener(l -> {
+                                FirstName = "WRONGDATA";
+                                LastName = finalName1;
+                                jd.setVisible(false);
+                                jd.dispose();
+                                synchronized (wait) {
+                                    wait.interrupt();
+                                }
+                            });
+
+                            try {
+                                synchronized (wait) {
+                                    wait.wait();
+                                }
+                            } catch (InterruptedException e) {
+                            }
                         }
                     }
             }
@@ -282,25 +605,25 @@ public class Person {
         }
 
         if (FirstName != null) {
-            while (FirstName.charAt(0) ==' ') {
+            while (FirstName.charAt(0) == ' ') {
                 FirstName = FirstName.substring(1);
                 if (FirstName.isEmpty()) break;
             }
 
-            while (FirstName.charAt(FirstName.length()-1) ==' ') {
+            while (FirstName.charAt(FirstName.length() - 1) == ' ') {
                 FirstName = FirstName.substring(0, FirstName.length() - 2);
                 if (FirstName.isEmpty()) break;
             }
         }
 
         if (LastName != null) {
-            while (LastName.charAt(0) ==' ') {
+            while (LastName.charAt(0) == ' ') {
                 LastName = LastName.substring(1);
                 if (LastName.isEmpty()) break;
             }
 
-            while (LastName.charAt(LastName.length()-1) ==' ') {
-                LastName = LastName.substring(0, LastName.length()-2);
+            while (LastName.charAt(LastName.length() - 1) == ' ') {
+                LastName = LastName.substring(0, LastName.length() - 2);
                 if (LastName.isEmpty()) break;
             }
         }
