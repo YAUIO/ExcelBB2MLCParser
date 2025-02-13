@@ -1,10 +1,7 @@
 package Parsers;
 
 import Entities.MLCEntry;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -16,6 +13,10 @@ import java.util.ArrayList;
 public class MLCListToXLSX {
     public static void record(File f, ArrayList<MLCEntry> data) {
         try (Workbook workbook = new XSSFWorkbook(); FileOutputStream fileOut = new FileOutputStream(f)) {
+
+            CellStyle yellowCellStyle = workbook.createCellStyle();
+            yellowCellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+            yellowCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
             Sheet sheet = workbook.createSheet("ConvertedToMLC");
             Field[] fields = MLCEntry.class.getDeclaredFields();
@@ -39,6 +40,10 @@ public class MLCListToXLSX {
                             cell.setCellValue((Long) fields[c].get(entry));
                         } else if (fields[c].getType() == String.class) {
                             cell.setCellValue((String) fields[c].get(entry));
+                            if (cell.getStringCellValue().equals("WRONGDATA")) {
+                                cell.setCellStyle(yellowCellStyle);
+                                row.getCell(c-1).setCellStyle(yellowCellStyle);
+                            }
                         }
                     } catch (Exception e) {
                     }
