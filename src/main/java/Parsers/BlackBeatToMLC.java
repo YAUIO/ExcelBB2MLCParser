@@ -1,10 +1,8 @@
 package Parsers;
 
-import Entities.BlackBeatEntry;
-import Entities.MLCEntry;
-import Entities.Person;
-import Entities.PersonList;
+import Entities.*;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -15,7 +13,25 @@ public class BlackBeatToMLC {
         Field[] fields = MLCEntry.class.getDeclaredFields();
         PersonList list = null;
         boolean doNotAdd = false;
+        int debugCounter = 0;
+        int lastListSize = 0;
         for (BlackBeatEntry bb : sourceData) {
+            System.out.println("Converting entry " + debugCounter + "/" + sourceData.size());
+
+            if (debugCounter%20 == 0) {
+                try {
+                    if (Init.getEntityManager().createQuery("SELECT h from Human h").getResultList().size() > lastListSize) {
+                        lastListSize = Init.getEntityManager().createQuery("SELECT h from Human h").getResultList().size();
+                        DBtoXLSX.write(new File("db.xlsx"));
+                        System.out.println("| Successfully wrote out DB to XLSX |");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Exception while writing db " + e.getMessage());
+                }
+            }
+
+            debugCounter++;
+
             list = new PersonList();
 
             String[] splitS = bb.track_composer.split(",");
