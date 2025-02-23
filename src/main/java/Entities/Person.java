@@ -1,12 +1,13 @@
 package Entities;
 
 import Annotations.AlternateTitle;
+import Parsers.DBtoXLSX;
 import jakarta.persistence.EntityManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
+import java.io.File;
 import java.util.Arrays;
 
 public class Person {
@@ -46,6 +47,7 @@ public class Person {
                         LastName = nameArr[0];
                     } else {
                         JDialog jd = new JDialog();
+                        addListeners(jd);
                         jd.setTitle("Need manual intervention");
                         Dimension d = new Dimension(400, 200);
                         jd.setSize(d);
@@ -194,6 +196,7 @@ public class Person {
                         if (nameArr.length == 3) {
                             {
                                 JDialog jd = new JDialog();
+                                addListeners(jd);
                                 jd.setTitle("Need manual intervention");
                                 Dimension d = new Dimension(400, 200);
                                 jd.setSize(d);
@@ -302,6 +305,7 @@ public class Person {
 
                             if (!FirstName.equals("WRONGDATA")) {
                                 JDialog jd = new JDialog();
+                                addListeners(jd);
                                 jd.setTitle("Need manual intervention");
                                 Dimension d = new Dimension(400, 200);
                                 jd.setSize(d);
@@ -493,8 +497,8 @@ public class Person {
                             }
 
                         } else {
-
                             JDialog jd = new JDialog();
+                            addListeners(jd);
                             jd.setTitle("Need manual intervention");
                             Dimension d = new Dimension(400, 200);
                             jd.setSize(d);
@@ -622,5 +626,20 @@ public class Person {
             }
         }
         return false;
+    }
+
+    public static void addListeners (JDialog jd) {
+        jd.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (e.getNewState() == 0) {
+                    System.err.println("JDialog closed, saving db and exiting...");
+                    File f = new File("db.xlsx");
+                    if (f.exists()) if (!f.delete()) System.err.println("Couldn't delete db.xlsx");
+                    DBtoXLSX.write(f);
+                    System.exit(1);
+                }
+            }
+        });
     }
 }
