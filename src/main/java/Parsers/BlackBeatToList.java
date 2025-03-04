@@ -56,13 +56,32 @@ public class BlackBeatToList {
                         }
                     } else if (expectedType == String.class) {
                         try {
-                            obj = val.getStringCellValue();
+                            String s = val.getStringCellValue();
+                            if (s.contains("\n")) {
+                                int pos = s.lastIndexOf('\n');
+                                if (s.length() > pos + 1) {
+                                    if (s.charAt(pos - 1) != ' ' || s.charAt(pos + 1) != ' ') {
+                                        obj = s.replace('\n', ' ');
+                                    } else {
+                                        obj = s.substring(0, pos) + s.substring(pos + 1);
+                                    }
+                                } else {
+                                    if (s.charAt(pos - 1) != ' ') {
+                                        obj = s.replace('\n', ' ');
+                                    } else {
+                                        obj = s.substring(0, pos);
+                                    }
+                                }
+                            } else {
+                                obj = s;
+                            }
                         } catch (Exception e) {
                             if (val.getCellType() == CellType.NUMERIC) {
                                 long number = (long) val.getNumericCellValue();
                                 obj = String.valueOf(number);
                             }
                         }
+                        //System.out.println("DEBUG: Input String: \"" + val.getStringCellValue() + "\", Parsed String: \"" + ((String) obj) + "\"");
                     } else if (expectedType == Integer.class) {
                         try {
                             obj = Double.valueOf(val.getNumericCellValue()).intValue();
